@@ -1,0 +1,12 @@
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 960px;
+  margin: var(--spacing-lg) auto;
+  padding: var(--spacing-lg);
+  gap: var(--spacing-lg);
+  background-color: var(--color-paper);
+  box-shadow: var(--box-shadow);
+  border-radius: var(--border-radius-md);
+}

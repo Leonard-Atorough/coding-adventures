@@ -1,0 +1,53 @@
+:root {
+  --color-primary: #4a90e2;
+  --color-secondary: #50e3c2;
+  --color-background: #f5f7fa;
+  --color-paper: #ffffff;
+  --color-text: #333333;
+
+  --color-warning: #d9534f;
+  --color-warning-bg: #f2dede;
+  --color-warning-text: #a94442;
+
+  --color-success: #5cb85c;
+  --color-success-bg: #dff0d8;
+  --color-success-text: #3c763d;
+
+  --color-info: #f0ad4e;
+  --color-info-bg: #fcf8e3;
+  --color-info-text: #8a6d3b;
+
+  --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  --font-size-base: 16px;
+  --spacing-base: 8px;
+  --border-radius: 4px;
+  --box-shaodw-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --transition-duration: 0.3s;
+
+  /* font sizes */
+  --font-size-sm: calc(var(--font-size-base) * 0.875);
+  --font-size-md: var(--font-size-base);
+  --font-size-lg: calc(var(--font-size-base) * 1.25);
+  --font-size-xl: calc(var(--font-size-base) * 1.5);
+  --font-size-xxl: calc(var(--font-size-base) * 2);
+
+  /* spacing scale utils */
+  --spacing-xs: calc(var(--spacing-base) * 0.25);
+  --spacing-sm: calc(var(--spacing-base) * 0.5);
+  --spacing-md: var(--spacing-base);
+  --spacing-lg: calc(var(--spacing-base) * 2);
+  --spacing-xl: calc(var(--spacing-base) * 4);
+
+  /* border radius scale utils */
+  --border-radius-sm: calc(var(--border-radius) * 0.5);
+  --border-radius-md: var(--border-radius);
+  --border-radius-lg: calc(var(--border-radius) * 1.5);
+
+  --fw-normal: 400;
+  --fw-bold: 700;
+  --fw-semi-bold: 600;
+  --fw-light: 300;
+}

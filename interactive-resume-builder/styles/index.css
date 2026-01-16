@@ -1,0 +1,44 @@
+@import "./base.css";
+@import "./variables.css";
+@import "./layout.css";
+@import "./components/form.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-primary);
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.generate-btn {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-lg);
+  font-weight: var(--fw-bold);
+  color: #fff;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-duration);
+}
+
+.generate-btn:hover {
+  background-color: var(--color-secondary);
+}

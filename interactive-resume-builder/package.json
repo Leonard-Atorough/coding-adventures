@@ -1,0 +1,20 @@
+{
+  "name": "interactive-resume-builder",
+  "version": "1.0.0",
+  "description": "A single page web application that allows users to input their personal and professional details through a form and generates a styled PDF resume. The app offers 2-3 themes for customization.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Leonard Atorough",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  }
+}
