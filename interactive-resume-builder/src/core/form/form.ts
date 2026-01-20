@@ -1,4 +1,4 @@
-import type {FormModel} from "../../types/index";
+import type { FormModel } from "../../types/index";
 import FormValidator, { type ValidationResult } from "./formValidator";
 import FormView from "./formView";
 import FormModelBuilder from "./formModelBuilder";
@@ -13,6 +13,8 @@ export default class Form implements Form {
   private readonly validator: FormValidator;
   private readonly formView: FormView;
   private formElement: HTMLFormElement | null = null;
+  
+  private debouncedInputHandler: ((e: Event) => void) | null = null;
 
   constructor(mountPoint: string | HTMLElement, initialModel: Partial<FormModel> = {}) {
     const rootEl = typeof mountPoint === "string" ? document.querySelector(mountPoint) : mountPoint;
@@ -21,6 +23,7 @@ export default class Form implements Form {
     this.model = new FormModelBuilder(initialModel).getModel();
     this.validator = new FormValidator();
     this.formView = new FormView(mountPoint, initialModel);
+    this.debouncedInputHandler = debounce((e: Event) => this.handleInputChange(e), 500);
     console.log("Form initialized with model:", this.model);
   }
 
@@ -31,12 +34,11 @@ export default class Form implements Form {
   }
 
   private attachEventListeners(): void {
-    if (!this.formElement) return;
+    if (!this.formElement || !this.debouncedInputHandler) return;
 
-    this.formElement.addEventListener(
-      "input",
-      debounce((e) => this.handleInputChange(e), 300)
-    );
+    // Remove old listener if it exists to prevent duplicates
+    this.formElement.removeEventListener("input", this.debouncedInputHandler);
+    this.formElement.addEventListener("input", this.debouncedInputHandler);
   }
 
   clear(): void {
@@ -68,6 +70,12 @@ export default class Form implements Form {
     console.log("Validation Result:", validationResult);
     console.log("Current Model:", this.model);
     this.displayValidationResults(validationResult);
+
+    const modelUpdateEvent = new CustomEvent<Partial<FormModel>>("modelUpdate", {
+      detail: { ...this.model },
+    });
+    document.dispatchEvent(modelUpdateEvent);
+    console.log("Dispatched modelUpdate event with detail:", { ...this.model });
   }
 
   private displayValidationResults(validationResult: ValidationResult): void {
@@ -77,10 +85,18 @@ export default class Form implements Form {
       (field as HTMLDivElement).style.opacity = "0`";
     });
     validationResult.errors.forEach((error) => {
-      this.formView.RenderValidationMessage(error.field, error.message, this.VALIDATION_ERROR_CLASS);
+      this.formView.RenderValidationMessage(
+        error.field,
+        error.message,
+        this.VALIDATION_ERROR_CLASS
+      );
     });
     validationResult.notifications.forEach((notification) => {
-      this.formView.RenderValidationMessage(notification.field, notification.message, this.VALIDATION_NOTIFICATION_CLASS);
+      this.formView.RenderValidationMessage(
+        notification.field,
+        notification.message,
+        this.VALIDATION_NOTIFICATION_CLASS
+      );
     });
   }
 }

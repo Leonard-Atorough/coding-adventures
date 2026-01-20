@@ -1,4 +1,5 @@
 import Form from "./core/form/form";
+import Preview from "./core/preview/Preview";
 import Store from "./store/store";
 import ThemeManager from "./core/theme/ThemeManager";
 import { modernThemeConfig } from "./core/theme/themes/modern";
@@ -9,23 +10,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeRoot = document.getElementById("theme-selection");
   const store = Store.getInstance();
 
-  // Initialize form
   if (formRoot) {
     const form = new Form(formRoot, store.getState("formModel") || {});
     form.build();
   }
 
-  // Initialize theme manager with preview container
   if (resumePreview) {
     const themeManager = ThemeManager.getInstance();
     themeManager.setPreviewContainer(resumePreview as HTMLElement);
-    // Apply default theme to preview
     themeManager.setTheme(modernThemeConfig);
+
+    const preview = new Preview(resumePreview, store.getState("formModel") || {});
+    preview.build();
   }
 
-  // Initialize theme selection UI
+
   if (themeRoot) {
-    // Theme selector UI will go here
     console.log("Theme selector would initialize here.");
   }
 

@@ -21,6 +21,40 @@
   border-bottom: 2px solid var(--color-primary);
 }
 
+.form-section__navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-primary);
+}
+
+.form-section__nav-button {
+  padding: var(--spacing-md);
+  font-size: var(--font-size-md);
+  font-weight: var(--fw-semi-bold);
+  color: var(--color-text);
+  background-color: var(--color-secondary);
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  box-shadow: var(--box-shadow-sm);
+  transition: all var(--transition-duration);
+}
+
+.form-section__nav-button:hover {
+  background-color: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--box-shadow);
+}
+
+.form-section__nav-button:disabled {
+  background-color: var(--color-disabled);
+  color: var(--color-text-light);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .form-section__add-button {
   align-self: flex-start;
   padding: var(--spacing-md) var(--spacing-lg);

@@ -1,4 +1,4 @@
-import type { FormModel } from "../../types/index";
+import type { FormModel } from "../../types";
 import { formConfig } from "./formConfig";
 
 type SectionKey = keyof FormModel;
@@ -6,6 +6,7 @@ type SectionKey = keyof FormModel;
 interface RenderContext {
   root: HTMLElement;
   rowsMap: Map<SectionKey, HTMLElement[]>;
+  currentRowIndex?: number;
 }
 
 export default class FormView {
@@ -17,11 +18,17 @@ export default class FormView {
 
     if (!rootEl) throw new Error("Mount point not found");
 
+    this.model = { ...initialModel } as FormModel;
+
     this.ctx = {
       root: rootEl as HTMLElement,
       rowsMap: new Map(),
+      currentRowIndex: 0,
     };
-    this.model = { ...initialModel } as FormModel;
+
+    Object.entries(this.model).forEach(([section, data]) => {
+      this.ctx.rowsMap.set(section as SectionKey, []);
+    });
   }
 
   private getForm(): HTMLFormElement {
@@ -29,15 +36,19 @@ export default class FormView {
   }
 
   render(): HTMLFormElement {
-    const form = document.createElement("form");
+    const form = this.getForm() || document.createElement("form");
     form.id = "resume-form";
+    form.className = "resume-form";
+    form.innerHTML = "";
     this.ctx.root.appendChild(form);
 
-    this.renderFormSection("personalInfo");
-    this.renderFormSection("education");
-    this.renderFormSection("workExperience");
-    this.renderFormSection("skills");
-    this.renderFormSection("additionalInformation");
+    const nextSectionKeys = Object.keys(formConfig) as SectionKey[];
+
+    this.renderFormSection(nextSectionKeys[this.ctx.currentRowIndex ?? 0]);
+    // this.renderFormSection("education");
+    // this.renderFormSection("workExperience");
+    // this.renderFormSection("skills");
+    // this.renderFormSection("additionalInformation");
     return form;
   }
 
@@ -81,8 +92,49 @@ export default class FormView {
       sectionDiv.appendChild(addButton);
     }
 
+    const navigationDiv = document.createElement("div");
+    navigationDiv.className = "form-section__navigation";
+    sectionDiv.appendChild(navigationDiv);
+    this.initializeNavigationButtons(navigationDiv);
+
     form.appendChild(sectionDiv);
     this.ctx.rowsMap.set(section, [sectionDiv]);
+  }
+
+  private initializeNavigationButtons(navigationDiv: HTMLDivElement) {
+    const nextIndex = (this.ctx.currentRowIndex ?? 0) + 1;
+    const prevIndex = (this.ctx.currentRowIndex ?? 0) - 1;
+
+    const nextSectionKeys = Object.keys(formConfig) as SectionKey[];
+
+    const prevSectionButton = document.createElement("button");
+    prevSectionButton.type = "button";
+    prevSectionButton.textContent = "Previous Section";
+    prevSectionButton.className = " form-section__nav-button form-section__nav-button--prev";
+    prevSectionButton.addEventListener("click", () => {
+      if (this.ctx.currentRowIndex === undefined) return;
+      this.ctx.currentRowIndex = prevIndex;
+      this.render();
+    });
+    if (prevIndex < 0) {
+      prevSectionButton.disabled = true;
+    }
+    navigationDiv.appendChild(prevSectionButton);
+
+    const nextSectionButton = document.createElement("button");
+    nextSectionButton.type = "button";
+    nextSectionButton.textContent = "Next Section";
+    nextSectionButton.className = "form-section__nav-button form-section__nav-button--next";
+
+    nextSectionButton.addEventListener("click", () => {
+      if (this.ctx.currentRowIndex === undefined) return;
+      this.ctx.currentRowIndex = nextIndex;
+      this.render();
+    });
+    navigationDiv.appendChild(nextSectionButton);
+    if (nextIndex >= nextSectionKeys.length) {
+      nextSectionButton.disabled = true;
+    }
   }
 
   private renderFormGroup(
@@ -94,7 +146,7 @@ export default class FormView {
     formGroup.className = "form-group";
 
     const label = document.createElement("label");
-    label.htmlFor = `${section}-${field.key}`;
+    label.htmlFor = `${section}-${field.key}${index !== undefined ? `-${index}` : ""}`;
     label.textContent = field.label;
     label.className = "form-group__label";
 
@@ -115,7 +167,7 @@ export default class FormView {
       input.className = "form-group__input";
     }
 
-    input.id = `${section}-${field.key}`;
+    input.id = `${section}-${field.key}${index !== undefined ? `-${index}` : ""}`;
     input.setAttribute("name", `${section}-${field.key}${index !== undefined ? `-${index}` : ""}`);
 
     formGroup.appendChild(label);
