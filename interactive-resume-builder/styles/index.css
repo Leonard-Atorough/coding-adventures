@@ -2,6 +2,7 @@
 @import "./variables.css";
 @import "./layout.css";
 @import "./components/form.css";
+@import "./components/preview.css";
 
 *,
 *::before,

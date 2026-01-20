@@ -9,7 +9,7 @@ export const minimalThemeConfig: ThemeConfig = {
     background: "#ffffff",
     surface: "#fafafa",
     text: "#000000",
-    textSecondary: "#6b6b6b",
+    ["text-secondary"]: "#6b6b6b",
     border: "#e0e0e0",
   },
   typography: {

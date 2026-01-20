@@ -7,7 +7,7 @@ export interface ThemeConfig {
     background: string;
     surface: string;
     text: string;
-    textSecondary: string;
+    ["text-secondary"]: string;
     border: string;
   };
   typography: {

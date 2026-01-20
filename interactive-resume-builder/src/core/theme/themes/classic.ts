@@ -9,7 +9,7 @@ export const classicThemeConfig: ThemeConfig = {
     background: "#ffffff",
     surface: "#f0f0f0",
     text: "#000000",
-    textSecondary: "#555555",
+    ["text-secondary"]: "#555555",
     border: "#cccccc",
   },
   typography: {

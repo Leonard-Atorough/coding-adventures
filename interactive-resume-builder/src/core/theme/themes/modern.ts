@@ -10,7 +10,7 @@ export const modernThemeConfig: ThemeConfig = {
     background: "#ffffff",
     surface: "#f8fafc",
     text: "#1e293b",
-    textSecondary: "#64748b",
+    ["text-secondary"]: "#64748b",
     border: "#e2e8f0",
   },
   typography: {

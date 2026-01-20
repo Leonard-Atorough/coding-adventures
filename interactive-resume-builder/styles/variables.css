@@ -45,6 +45,7 @@
   --border-radius-sm: calc(var(--border-radius) * 0.5);
   --border-radius-md: var(--border-radius);
   --border-radius-lg: calc(var(--border-radius) * 1.5);
+  --border-radius-xl: calc(var(--border-radius) * 2);
 
   --fw-normal: 400;
   --fw-bold: 700;
