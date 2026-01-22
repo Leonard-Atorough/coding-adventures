@@ -1,7 +1,5 @@
 import type { FormModel, SectionKey } from "../../types";
-import { formConfig } from "./FormConfig";
-
-
+import { formConfig } from "./formConfig";
 
 // Context for rendering the form
 // Holds references to the root element and current state of the form visually. Local state that doesn't affect the model or get persisted.
