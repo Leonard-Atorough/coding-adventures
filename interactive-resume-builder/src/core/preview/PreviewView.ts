@@ -68,7 +68,7 @@ export default class PreviewView {
     educationSection.appendChild(header);
     this.root.appendChild(educationSection);
 
-    model.education?.forEach((edu) => {
+    model.education.forEach((edu) => {
       this.renderEducationItem(educationSection, edu);
     });
   }
@@ -81,7 +81,7 @@ export default class PreviewView {
     eduDiv.className = "preview-education-item";
 
     const institutionEl = document.createElement("h3");
-    institutionEl.textContent = edu.institution || "Institution Name";
+    institutionEl.textContent = edu.institution ?? "Institution Name";
     eduDiv.appendChild(institutionEl);
 
     const degreeEl = document.createElement("p");

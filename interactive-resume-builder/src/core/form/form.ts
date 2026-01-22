@@ -20,7 +20,7 @@ export default class Form implements Form {
     const rootEl = typeof mountPoint === "string" ? document.querySelector(mountPoint) : mountPoint;
     if (!rootEl) throw new Error("Mount point not found");
 
-    this.model = new FormModelBuilder(initialModel).getModel();
+    this.model = initialModel as FormModel;
     this.validator = new FormValidator();
     this.formView = new FormView(mountPoint, this.model);
     this.debouncedInputHandler = debounce((e: Event) => this.handleInputChange(e), 500);

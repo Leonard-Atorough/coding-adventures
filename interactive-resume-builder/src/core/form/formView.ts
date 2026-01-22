@@ -159,6 +159,10 @@ export default class FormView {
         },
       ];
       this.render();
+      const modelUpdateEvent = new CustomEvent<Partial<FormModel>>("modelUpdate", {
+        detail: { ...this.model },
+      });
+      document.dispatchEvent(modelUpdateEvent);
     });
     return button;
   }
