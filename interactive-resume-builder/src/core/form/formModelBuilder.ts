@@ -1,4 +1,4 @@
-import type { FormModel } from "../../types/index";
+import type { FormModel, educationItem, workExperienceItem, skillItem } from "../../types";
 
 class EmptyFormModel implements FormModel {
   personalInfo = {
@@ -8,12 +8,37 @@ class EmptyFormModel implements FormModel {
     address: "",
     summary: "",
   };
-  education = Array.from<FormModel["education"][0]>({ length: 0 });
-  workExperience = Array.from<FormModel["workExperience"][0]>({ length: 0 });
-  skills = Array.from<FormModel["skills"][0]>({ length: 0 });
+  education = [
+    {
+      id: null,
+      institution: "",
+      degree: "",
+      fieldOfStudy: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+    } as educationItem,
+  ];
+  workExperience = [
+    {
+      id: null,
+      company: "",
+      role: "",
+      startDate: "",
+      endDate: "",
+      responsibilities: "",
+    } as workExperienceItem,
+  ];
+  skills = [
+    {
+      id: null,
+      title: "",
+      description: "",
+    } as skillItem,
+  ];
   additionalInformation = {
     certifications: [],
-    langauges: [],
+    languages: [],
     hobbies: [],
   };
 }

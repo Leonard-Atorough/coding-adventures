@@ -145,6 +145,21 @@ export default class FormView {
     button.type = "button";
     button.textContent = `Add ${formConfig[section].displayName}`;
     button.className = "form-section__add-button";
+
+    button.addEventListener("click", () => {
+      (this.model[section] as Array<any>) = [
+        ...(this.model[section] as Array<any>),
+        {
+          institution: "",
+          degree: "",
+          fieldOfStudy: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        },
+      ];
+      this.render();
+    });
     return button;
   }
 

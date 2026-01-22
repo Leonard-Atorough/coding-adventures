@@ -7,7 +7,7 @@ export interface personalInfo {
 }
 
 export interface educationItem {
-  id: number;
+  id: number | null;
   institution: string;
   degree: string;
   fieldOfStudy: string;
@@ -17,7 +17,7 @@ export interface educationItem {
 }
 
 export interface workExperienceItem {
-  id: number;
+  id: number | null;
   company: string;
   role: string;
   startDate: string;
@@ -26,22 +26,22 @@ export interface workExperienceItem {
 }
 
 export interface skillItem {
-  id: number;
+  id: number | null;
   title: string;
   description: string;
 }
 
 export interface additionalInformation {
   certifications: Array<{
-    id: number;
+    id: number | null;
     description: string;
   }>;
-  langauges: Array<{
-    id: number;
+  languages: Array<{
+    id: number | null;
     description: string;
   }>;
   hobbies: Array<{
-    id: number;
+    id: number | null;
     description: string;
   }>;
 }
