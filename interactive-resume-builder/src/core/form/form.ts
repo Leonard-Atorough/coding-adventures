@@ -85,14 +85,14 @@ export default class Form implements Form {
       (field as HTMLDivElement).style.opacity = "0`";
     });
     validationResult.errors.forEach((error) => {
-      this.formView.RenderValidationMessage(
+      this.formView.renderValidationMessage(
         error.field,
         error.message,
         this.VALIDATION_ERROR_CLASS
       );
     });
     validationResult.notifications.forEach((notification) => {
-      this.formView.RenderValidationMessage(
+      this.formView.renderValidationMessage(
         notification.field,
         notification.message,
         this.VALIDATION_NOTIFICATION_CLASS
