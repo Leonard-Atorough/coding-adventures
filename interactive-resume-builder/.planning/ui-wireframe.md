@@ -33,71 +33,54 @@ The wireframe consists of the following main components:
 - The theme selection will be placed below the form section.
 - The generate button will be centered at the bottom of the form section for easy access.
 
-## Color Scheme and Typography
 
-- A clean and professional color scheme with a white background, dark text, and accent colors for buttons and highlights.
-- Use of sans-serif fonts for readability, with larger font sizes for headings and labels.
+# UI Design — Updated
 
-## Responsiveness
+Top-level layout updated to a two-column builder: left is the form/sidebar, right is the live resume preview (themed and printable).
 
-- The design will be responsive, ensuring usability across various devices, including desktops, tablets, and smartphones.
-- Input fields and buttons will adjust their size and layout based on the screen size.
+## Key Areas
 
-## User Interaction
+- Header: app title and quick actions (Export, Reset).
+- Left Sidebar: form groups (collapsible) and theme controls.
+- Right Preview: `#resume-preview` container renders the CV and receives theme CSS variables.
+- Footer: subtle links and attribution.
 
-- Input fields will have placeholder text to guide users on what information to enter.
-- Real-time validation will provide feedback on required fields and correct formats.
-- The generate button will be disabled until all required fields are filled out.
+## Sidebar (form + controls)
 
-## Accessibility
+- Collapsible panels: Personal, Education, Work, Skills, Extras.
+- Per-field validation feedback shown inline.
+- Theme selector: visual thumbnails + radio list; selecting updates preview only.
+- Generate PDF button and small export options (PDF, PNG).
 
-- The design will follow accessibility best practices, including proper contrast ratios, keyboard navigation, and screen reader compatibility.
+## Preview
 
-## Conclusion
+- Represents a physical page (8.5"×11") centered in the preview area.
+- Uses CSS variables for colors, typography, spacing; themes only set variables on the preview container.
+- Live updates from form via `modelUpdate` events.
 
-The UI wireframe for the Interactive Resume Builder focuses on simplicity, usability, and professionalism. The design aims to provide users with an intuitive experience for creating their resumes quickly and efficiently.
+## Responsive behavior
 
-## ASCII Wireframe
+- Desktop: two-column grid (.builder-sidebar / .preview-container).
+- Tablet/mobile: stacked layout with preview below or toggled via a "Preview" button.
 
+## Accessibility & Interaction notes
+
+- Keyboard focus states, aria labels for collapsible groups, and semantic headings.
+- Validation is debounced and shown per-field; success messages are presented in UI only, not as validation return values.
+
+## ASCII Overview
 ```
-+------------------------------------------------+
-| Interactive Resume Builder                     |
-| Create your professional resume in minutes     |
-+------------------------------------------------+
-| [ Personal Information ]                       |
-| Name: ___________________________             |
-| Email: __________________________             |
-| Phone: __________________________             |
-| Address: ________________________             |
-+------------------------------------------------+
-| [ Education ]                                  |
-| School: ________________________              |
-| Degree: ________________________              |
-| Graduation Year: ________________             |
-+------------------------------------------------+
-| [ Work Experience ]                            |
-| Company: _______________________              |
-| Role: __________________________              |
-| Duration: ______________________              |
-| Responsibilities: _______________             |
-+------------------------------------------------+
-| [ Skills ]                                     |
-| Skill 1: _______________________              |
-| Skill 2: _______________________              |
-| Skill 3: _______________________              |
-+------------------------------------------------+
-| [ Additional Information ]                     |
-| Certifications: ________________              |
-| Languages: _____________________              |
-| Hobbies: _______________________              |
-+------------------------------------------------+
-| [ Theme Selection ]                            |
-| ( ) Theme 1   ( ) Theme 2   ( ) Theme 3        |
-| [ Preview Thumbnails ]                         |
-+------------------------------------------------+
-| [ Generate PDF ]                               |
-| [___________________________]                  |
-+------------------------------------------------+
-| About | Contact | Privacy Policy               |
-+------------------------------------------------+
+
++-----------------------------------------------+
+| Header (Title) |
++-----------------------------------------------+
+| Sidebar (Form) | Preview |
+| | +-----------------------+ |
+| [Collapsible] | | Resume Preview Box | |
+| [Theme thumb] | | (themed, printable) | |
+| [Generate] | +-----------------------+ |
++-----------------------------------------------+
+| Footer |
++-----------------------------------------------+
+
 ```
