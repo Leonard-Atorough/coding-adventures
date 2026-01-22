@@ -44,6 +44,7 @@ export default class FormView {
 
     const nextSectionKeys = Object.keys(formConfig) as SectionKey[];
 
+
     this.renderFormSection(nextSectionKeys[this.ctx.currentRowIndex ?? 0]);
     return form;
   }
