@@ -1,4 +1,4 @@
-import Form from "./core/form/form";
+import Form from "./core/form/Form";
 import Preview from "./core/preview/Preview";
 import Store from "./store/store";
 import ThemeManager from "./core/theme/ThemeManager";

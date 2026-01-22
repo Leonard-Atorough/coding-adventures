@@ -49,6 +49,17 @@ export default class PreviewView {
     contactEl.textContent = `Email: ${email} | Phone: ${phone} | Address: ${address}`;
     header.appendChild(contactEl);
 
+    const summaryEl = document.createElement("div");
+    summaryEl.className = "preview-summary";
+    const summaryHeader = document.createElement("h2");
+    summaryHeader.textContent = "Professional Summary";
+    const summaryContent = document.createElement("p");
+    summaryContent.textContent =
+      this.model.personalInfo?.summary || "A brief summary about yourself.";
+    summaryEl.appendChild(summaryHeader);
+    summaryEl.appendChild(summaryContent);
+    header.appendChild(summaryEl);
+
     this.root.appendChild(header);
   }
 }

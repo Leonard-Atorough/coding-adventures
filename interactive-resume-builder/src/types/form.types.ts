@@ -53,3 +53,5 @@ export interface FormModel {
   skills: Array<skillItem>;
   additionalInformation: additionalInformation;
 }
+
+export type SectionKey = keyof FormModel;

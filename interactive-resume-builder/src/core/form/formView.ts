@@ -1,8 +1,10 @@
-import type { FormModel } from "../../types";
-import { formConfig } from "./formConfig";
+import type { FormModel, SectionKey } from "../../types";
+import { formConfig } from "./FormConfig";
 
-type SectionKey = keyof FormModel;
 
+
+// Context for rendering the form
+// Holds references to the root element and current state of the form visually. Local state that doesn't affect the model or get persisted.
 interface RenderContext {
   root: HTMLElement;
   rowsMap: Map<SectionKey, HTMLElement[]>;
@@ -45,10 +47,6 @@ export default class FormView {
     const nextSectionKeys = Object.keys(formConfig) as SectionKey[];
 
     this.renderFormSection(nextSectionKeys[this.ctx.currentRowIndex ?? 0]);
-    // this.renderFormSection("education");
-    // this.renderFormSection("workExperience");
-    // this.renderFormSection("skills");
-    // this.renderFormSection("additionalInformation");
     return form;
   }
 

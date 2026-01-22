@@ -6,6 +6,7 @@ export type {
   workExperienceItem,
   skillItem,
   additionalInformation,
+  SectionKey,
 } from "./form.types";
 
 export type { ThemeConfig } from "./theme.types";

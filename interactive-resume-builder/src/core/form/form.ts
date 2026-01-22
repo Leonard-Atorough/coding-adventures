@@ -1,7 +1,7 @@
 import type { FormModel } from "../../types/index";
-import FormValidator, { type ValidationResult } from "./formValidator";
-import FormView from "./formView";
-import FormModelBuilder from "./formModelBuilder";
+import FormValidator, { type ValidationResult } from "./FormValidator";
+import FormView from "./FormView";
+import FormModelBuilder from "./FormModelBuilder";
 
 import { debounce } from "../../utils/debounce";
 
@@ -13,7 +13,7 @@ export default class Form implements Form {
   private readonly validator: FormValidator;
   private readonly formView: FormView;
   private formElement: HTMLFormElement | null = null;
-  
+
   private debouncedInputHandler: ((e: Event) => void) | null = null;
 
   constructor(mountPoint: string | HTMLElement, initialModel: Partial<FormModel> = {}) {
