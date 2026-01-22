@@ -21,6 +21,16 @@
   border-bottom: 2px solid var(--color-primary);
 }
 
+.form-section__selector {
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
 .form-section__navigation {
   display: flex;
   justify-content: space-between;

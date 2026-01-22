@@ -8,7 +8,7 @@ export default class Preview {
   private modelUpdateHandler: ((e: Event) => void) | null = null;
 
   constructor(mountPoint: string | HTMLElement, model: Partial<FormModel> = {}) {
-    this.view = new PreviewView(mountPoint, model);
+    this.view = new PreviewView(mountPoint);
     this.model = { ...model } as FormModel;
     this.modelUpdateHandler = (e: Event) => {
       const customEvent = e as CustomEvent<Partial<FormModel>>;
@@ -18,8 +18,7 @@ export default class Preview {
   }
 
   build(): void {
-    this.clear();
-    this.previewElement = this.view.render();
+    this.previewElement = this.view.render(this.model);
     this.attachEventListeners();
   }
 
@@ -41,9 +40,7 @@ export default class Preview {
     console.log("Preview received model update:", newModel);
     this.model = { ...this.model, ...newModel } as FormModel;
     console.log("Preview model updated:", this.model);
-
-    // Just re-render the view, don't rebuild (which would add more listeners)
-    this.view = new PreviewView(this.previewElement as HTMLElement, this.model);
-    this.previewElement = this.view.render();
+    
+    this.view.render(this.model);
   }
 }

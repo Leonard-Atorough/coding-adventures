@@ -44,6 +44,10 @@ export default class FormView {
     const form = this.getForm() || this.createForm();
     form.innerHTML = "";
 
+
+    const sectionSelector = this.createSectionSelector();
+    form.appendChild(sectionSelector);
+
     const currentSection = this.sectionKeys[this.ctx.currentRowIndex];
 
     if (this.ctx.sectionCache.has(currentSection)) {
@@ -96,6 +100,28 @@ export default class FormView {
     return sectionDiv;
   }
 
+  private createSectionSelector(): HTMLSelectElement { 
+    const select = document.createElement("select");
+    select.className = "form-section__selector";
+    this.sectionKeys.forEach((sectionKey, index) => {
+      const option = document.createElement("option");
+      option.value = sectionKey;
+      option.textContent = formConfig[sectionKey].displayName;
+      if (index === this.ctx.currentRowIndex) {
+        option.selected = true;
+      }
+      select.appendChild(option);
+    });
+    select.addEventListener("change", (e) => {
+      const target = e.target as HTMLSelectElement;
+      const selectedSection = target.value as SectionKey;
+      this.ctx.currentRowIndex = this.sectionKeys.indexOf(selectedSection);
+      this.render();
+    });
+    return select;
+  }
+
+
   private createFormGroups(section: SectionKey): HTMLDivElement {
     const container = document.createElement("div");
     container.className = "form-groups";
@@ -104,7 +130,7 @@ export default class FormView {
     const isArray = config.isArray && Array.isArray(this.model[section]);
     const modelArray = isArray ? (this.model[section] as Array<any>) : [];
 
-    if (isArray && modelArray.length > 0) {
+    if (isArray) {
       modelArray.forEach((_, index) => {
         config.fields.forEach((field) => {
           container.append(this.createFormGroup(section, field, index));
