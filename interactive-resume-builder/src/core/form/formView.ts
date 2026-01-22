@@ -12,28 +12,18 @@ export default class FormView {
   private readonly model: FormModel;
   private readonly sectionKeys: SectionKey[];
 
-  constructor(mountPoint: string | HTMLElement, initialModel: Partial<FormModel> = {}) {
+  constructor(mountPoint: string | HTMLElement, model: FormModel) {
     const rootEl = typeof mountPoint === "string" ? document.querySelector(mountPoint) : mountPoint;
     if (!rootEl) throw new Error("Mount point not found");
 
-    this.model = { ...initialModel } as FormModel;
+    this.model = model;
     this.sectionKeys = Object.keys(formConfig) as SectionKey[];
 
     this.ctx = {
       root: rootEl as HTMLElement,
-      // By using a Map to cache rendered sections, 
-      // we can efficiently manage dynamic form sections and avoid recreating expensive DOM elements.
       sectionCache: new Map(),
       currentRowIndex: 0,
     };
-
-    this.initializeSectionCache();
-  }
-
-  private initializeSectionCache(): void {
-    Object.keys(this.model).forEach((section) => {
-      this.ctx.sectionCache.set(section as SectionKey, []);
-    });
   }
 
   private getForm(): HTMLFormElement {
@@ -44,20 +34,23 @@ export default class FormView {
     const form = this.getForm() || this.createForm();
     form.innerHTML = "";
 
-
     const sectionSelector = this.createSectionSelector();
     form.appendChild(sectionSelector);
 
     const currentSection = this.sectionKeys[this.ctx.currentRowIndex];
 
-    if (this.ctx.sectionCache.has(currentSection)) {
-      // Re-render existing section from cache
+    // For array sections, always re-render to handle dynamic entries
+    const shouldUseCache =
+      this.ctx.sectionCache.has(currentSection) && !formConfig[currentSection].isArray;
+
+    if (shouldUseCache) {
       this.ctx.sectionCache.get(currentSection)?.forEach((section) => {
         form.appendChild(section);
       });
     } else {
       this.renderFormSection(currentSection);
     }
+
     this.ctx.currentRowIndex = this.sectionKeys.indexOf(currentSection);
     return form;
   }
@@ -100,7 +93,7 @@ export default class FormView {
     return sectionDiv;
   }
 
-  private createSectionSelector(): HTMLSelectElement { 
+  private createSectionSelector(): HTMLSelectElement {
     const select = document.createElement("select");
     select.className = "form-section__selector";
     this.sectionKeys.forEach((sectionKey, index) => {
@@ -121,21 +114,23 @@ export default class FormView {
     return select;
   }
 
-
   private createFormGroups(section: SectionKey): HTMLDivElement {
     const container = document.createElement("div");
     container.className = "form-groups";
 
     const config = formConfig[section];
-    const isArray = config.isArray && Array.isArray(this.model[section]);
-    const modelArray = isArray ? (this.model[section] as Array<any>) : [];
+    const isArray = config.isArray;
 
     if (isArray) {
-      modelArray.forEach((_, index) => {
+      const modelArray = this.model[section] as Array<any>;
+      console.log("Model array for section", section, ":", modelArray);
+      const itemCount = Math.max(modelArray.length, 1); // Always render at least one entry
+
+      for (let index = 0; index < itemCount; index++) {
         config.fields.forEach((field) => {
           container.append(this.createFormGroup(section, field, index));
         });
-      });
+      }
     } else {
       config.fields.forEach((field) => {
         container.append(this.createFormGroup(section, field));
@@ -276,6 +271,5 @@ export default class FormView {
       });
     });
     this.ctx.sectionCache.clear();
-    this.initializeSectionCache();
   }
 }

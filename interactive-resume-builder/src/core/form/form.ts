@@ -22,7 +22,7 @@ export default class Form implements Form {
 
     this.model = new FormModelBuilder(initialModel).getModel();
     this.validator = new FormValidator();
-    this.formView = new FormView(mountPoint, initialModel);
+    this.formView = new FormView(mountPoint, this.model);
     this.debouncedInputHandler = debounce((e: Event) => this.handleInputChange(e), 500);
     console.log("Form initialized with model:", this.model);
   }
@@ -54,10 +54,17 @@ export default class Form implements Form {
     if (index !== undefined) {
       const idx = parseInt(index, 10);
       if (isNaN(idx)) return;
+
       // Update model for array items
       if (section in this.model && Array.isArray((this.model as any)[section])) {
-        // @ts-ignore
-        this.model[section][idx][field] = target.value;
+        const sectionArray = (this.model as any)[section];
+
+        // Initialize array entry if it doesn't exist
+        if (!sectionArray[idx]) {
+          sectionArray[idx] = {};
+        }
+
+        sectionArray[idx][field] = target.value;
       }
     } else {
       // Update model for non-array items
@@ -66,6 +73,7 @@ export default class Form implements Form {
         this.model[section][field] = target.value;
       }
     }
+
     const validationResult = this.validator.validate(this.model);
     console.log("Validation Result:", validationResult);
     console.log("Current Model:", this.model);
@@ -88,14 +96,14 @@ export default class Form implements Form {
       this.formView.renderValidationMessage(
         error.field,
         error.message,
-        this.VALIDATION_ERROR_CLASS
+        this.VALIDATION_ERROR_CLASS,
       );
     });
     validationResult.notifications.forEach((notification) => {
       this.formView.renderValidationMessage(
         notification.field,
         notification.message,
-        this.VALIDATION_NOTIFICATION_CLASS
+        this.VALIDATION_NOTIFICATION_CLASS,
       );
     });
   }

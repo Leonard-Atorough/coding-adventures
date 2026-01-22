@@ -8,9 +8,9 @@ class EmptyFormModel implements FormModel {
     address: "",
     summary: "",
   };
-  education = [];
-  workExperience = [];
-  skills = [];
+  education = Array.from<FormModel["education"][0]>({ length: 0 });
+  workExperience = Array.from<FormModel["workExperience"][0]>({ length: 0 });
+  skills = Array.from<FormModel["skills"][0]>({ length: 0 });
   additionalInformation = {
     certifications: [],
     langauges: [],
