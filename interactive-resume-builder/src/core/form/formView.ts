@@ -144,9 +144,11 @@ export default class FormView {
     }
 
     const config = formConfig[section];
+    const data = index !== undefined ? (this.model[section] as Array<any>)[index] : this.model[section];
 
     config.fields.forEach((field) => {
-      formGroupCollection.append(FormElementFactory.createFormGroup(section, field, index));
+      const dataField = data[field.key] as string | undefined;
+      formGroupCollection.append(FormElementFactory.createFormGroup(section, field, index, dataField));
     });
 
     formContainer.appendChild(formGroupCollection);
