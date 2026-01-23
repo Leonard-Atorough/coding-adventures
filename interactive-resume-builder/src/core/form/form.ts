@@ -38,6 +38,7 @@ export default class Form implements Form {
     // Remove old listener if it exists to prevent duplicates
     this.formElement.removeEventListener("input", this.debouncedInputHandler);
     this.formElement.addEventListener("input", this.debouncedInputHandler);
+    this.formElement.addEventListener("change", this.debouncedInputHandler);
   }
 
   clear(): void {
@@ -74,7 +75,6 @@ export default class Form implements Form {
     }
 
     const validationResult = this.validator.validate(this.model);
-    console.log("Validation Result:", validationResult);
     console.log("Current Model:", this.model);
     this.displayValidationResults(validationResult);
 
