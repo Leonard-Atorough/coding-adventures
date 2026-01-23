@@ -16,5 +16,9 @@ export default class ThemeView {
     this.themes = initialThemes;
     this.selectedTheme = this.themes.length > 0 ? this.themes[0] : null;
     console.log("ThemeView initialized with themes:", this.themes);
+    console.log("Initial selected theme:", this.selectedTheme);
+    console.log("Mount point:", this.root);
+    this.themeStylesheet = document.createElement("style");
+    document.head.appendChild(this.themeStylesheet);
   }
 }

@@ -1,4 +1,4 @@
-import type { FormModel, SectionKey } from "../../types";
+import type { FormModel } from "../../types";
 
 export default class PreviewView {
   private readonly root: HTMLElement;
@@ -60,17 +60,27 @@ export default class PreviewView {
     this.root.appendChild(header);
   }
 
-  private renderAdditionalInformationSection(additionalInformation: FormModel["additionalInformation"]): void {
+  private renderAdditionalInformationSection(
+    additionalInformation: FormModel["additionalInformation"],
+  ): void {
     const section = document.createElement("section");
     section.className = "preview-additional-information";
     const header = document.createElement("h2");
     header.textContent = "Additional Information";
     section.appendChild(header);
 
-    // Well render certifications, languages, hobbies as a single line each, with commas separating items. 
+    // Well render certifications, languages, hobbies as a single line each, with commas separating items.
     // We have to anticipate both a space and comma separated input and parse accordingly.
     // We will render in the format: Certifications: cert1, cert2 <br> Languages: lang1, lang2 <br> Hobbies: hobby1, hobby2
     // This is a simple approach and can be enhanced later.
+    const certs = additionalInformation.certifications?.join(", ") || "None";
+    const langs = additionalInformation.languages?.join(", ") || "None";
+    const hobbies = additionalInformation.hobbies?.join(", ") || "None";
+    const infoEl = document.createElement("p");
+    infoEl.innerHTML = `<strong>Certifications:</strong> ${certs} <br>
+                        <strong>Languages:</strong> ${langs} <br>
+                        <strong>Hobbies:</strong> ${hobbies}`;
+    section.appendChild(infoEl);
 
     this.root.appendChild(section);
   }

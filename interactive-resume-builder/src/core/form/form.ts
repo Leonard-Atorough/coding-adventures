@@ -1,7 +1,6 @@
 import type { FormModel } from "../../types/index";
 import FormValidator, { type ValidationResult } from "./formValidator";
 import FormView from "./formView";
-import FormModelBuilder from "./formModelBuilder";
 
 import { debounce } from "../../utils/debounce";
 
