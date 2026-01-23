@@ -15,13 +15,13 @@ export default class FormElementFactory {
 
   static createInput(
     fieldId: string,
-    field: { type: string }
+    field: { type: string },
   ): HTMLInputElement | HTMLTextAreaElement {
     let input: HTMLInputElement | HTMLTextAreaElement;
 
     if (field.type === "textarea") {
       input = document.createElement("textarea");
-      input.rows = 8;
+      input.rows = 4;
       input.className = "form-group__textarea";
     } else {
       input = document.createElement("input");
@@ -46,7 +46,7 @@ export default class FormElementFactory {
   static createFormGroup(
     section: SectionKey,
     field: { key: string; label: string; type: string },
-    index?: number
+    index?: number,
   ): HTMLElement {
     const formGroup = document.createElement("div");
     formGroup.className = "form-group";
@@ -72,11 +72,11 @@ export default class FormElementFactory {
     button.type = "button";
     button.textContent = text;
     button.className = className;
-    
+
     if (onClick) {
       button.addEventListener("click", onClick);
     }
-    
+
     return button;
   }
 }
