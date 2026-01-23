@@ -1,5 +1,6 @@
 import type { FormModel, SectionKey } from "../../types";
 import { formConfig } from "./formConfig";
+import FormElementFactory from "./FormElementFactory";
 
 interface RenderContext {
   root: HTMLElement;
@@ -67,10 +68,23 @@ export default class FormView {
     const form = this.getForm();
     const sectionDiv = this.createSectionContainer(section);
 
-    const formGroups = this.createFormGroups(section);
-    sectionDiv.appendChild(formGroups);
+    const config = formConfig[section];
+    const isArray = config.isArray;
 
-    if (formConfig[section].isArray) {
+    if (isArray) {
+      const modelArray = this.model[section] as Array<any>;
+      const itemCount = Math.max(modelArray.length, 1);
+
+      for (let index = 0; index < itemCount; index++) {
+        const formGroups = this.createFormGroups(section, index);
+        sectionDiv.appendChild(formGroups);
+      }
+    } else {
+      const formGroups = this.createFormGroups(section);
+      sectionDiv.appendChild(formGroups);
+    }
+
+    if (isArray) {
       sectionDiv.appendChild(this.createAddButton(section));
     }
 
@@ -96,6 +110,7 @@ export default class FormView {
   private createSectionSelector(): HTMLSelectElement {
     const select = document.createElement("select");
     select.className = "form-section__selector";
+    select.id = "form-section-selector";
     this.sectionKeys.forEach((sectionKey, index) => {
       const option = document.createElement("option");
       option.value = sectionKey;
@@ -114,57 +129,54 @@ export default class FormView {
     return select;
   }
 
-  private createFormGroups(section: SectionKey): HTMLDivElement {
-    const container = document.createElement("div");
-    container.className = "form-groups";
+  private createFormGroups(section: SectionKey, index?: number): HTMLDivElement {
+    const formContainer = document.createElement("div");
+    formContainer.className = "form-section__container";
 
-    const config = formConfig[section];
-    const isArray = config.isArray;
+    const formGroupCollection = document.createElement("div");
+    formGroupCollection.className = "form-groups";
 
-    if (isArray) {
-      const modelArray = this.model[section] as Array<any>;
-      console.log("Model array for section", section, ":", modelArray);
-      const itemCount = Math.max(modelArray.length, 1); // Always render at least one entry
-
-      for (let index = 0; index < itemCount; index++) {
-        config.fields.forEach((field) => {
-          container.append(this.createFormGroup(section, field, index));
-        });
-      }
-    } else {
-      config.fields.forEach((field) => {
-        container.append(this.createFormGroup(section, field));
-      });
+    if (index !== undefined) {
+      const header = document.createElement("h3");
+      header.className = "form-groups__header";
+      header.textContent = `${formConfig[section].displayName} ${index + 1}`;
+      formContainer.appendChild(header);
     }
 
-    return container;
+    const config = formConfig[section];
+
+    config.fields.forEach((field) => {
+      formGroupCollection.append(FormElementFactory.createFormGroup(section, field, index));
+    });
+
+    formContainer.appendChild(formGroupCollection);
+
+    return formContainer;
   }
 
   private createAddButton(section: SectionKey): HTMLButtonElement {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = `Add ${formConfig[section].displayName}`;
-    button.className = "form-section__add-button";
-
-    button.addEventListener("click", () => {
-      (this.model[section] as Array<any>) = [
-        ...(this.model[section] as Array<any>),
-        {
-          institution: "",
-          degree: "",
-          fieldOfStudy: "",
-          startDate: "",
-          endDate: "",
-          description: "",
-        },
-      ];
-      this.render();
-      const modelUpdateEvent = new CustomEvent<Partial<FormModel>>("modelUpdate", {
-        detail: { ...this.model },
-      });
-      document.dispatchEvent(modelUpdateEvent);
-    });
-    return button;
+    return FormElementFactory.createButton(
+      `Add ${formConfig[section].displayName}`,
+      "form-section__add-button",
+      () => {
+        (this.model[section] as Array<any>) = [
+          ...(this.model[section] as Array<any>),
+          {
+            institution: "",
+            degree: "",
+            fieldOfStudy: "",
+            startDate: "",
+            endDate: "",
+            description: "",
+          },
+        ];
+        this.render();
+        const modelUpdateEvent = new CustomEvent<Partial<FormModel>>("modelUpdate", {
+          detail: { ...this.model },
+        });
+        document.dispatchEvent(modelUpdateEvent);
+      },
+    );
   }
 
   private createNavigationButtons(): HTMLDivElement {
@@ -185,93 +197,26 @@ export default class FormView {
     direction: "prev" | "next",
     offset: number,
   ): HTMLButtonElement {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = text;
-    button.className = `form-section__nav-button form-section__nav-button--${direction}`;
-
     const targetIndex = this.ctx.currentRowIndex + offset;
-    button.disabled = targetIndex < 0 || targetIndex >= this.sectionKeys.length;
+    const isDisabled = targetIndex < 0 || targetIndex >= this.sectionKeys.length;
 
-    if (!button.disabled) {
-      button.addEventListener("click", () => {
-        this.ctx.currentRowIndex = targetIndex;
-        this.render();
-      });
-    }
+    const button = FormElementFactory.createButton(
+      text,
+      `form-section__nav-button form-section__nav-button--${direction}`,
+      isDisabled
+        ? undefined
+        : () => {
+            this.ctx.currentRowIndex = targetIndex;
+            this.render();
+          },
+    );
 
+    button.disabled = isDisabled;
     return button;
   }
 
-  private createFormGroup(
-    section: SectionKey,
-    field: { key: string; label: string; type: string },
-    index?: number,
-  ): HTMLElement {
-    const formGroup = document.createElement("div");
-    formGroup.className = "form-group";
-
-    const fieldId = this.generateFieldId(section, field.key, index);
-
-    const label = this.createLabel(fieldId, field.label);
-    const input = this.createInput(fieldId, field);
-    const alertBox = this.createAlertBox(fieldId);
-
-    if (field.type === "textarea") {
-      formGroup.classList.add("form-group--full-width");
-    }
-
-    formGroup.appendChild(label);
-    formGroup.appendChild(input);
-    formGroup.appendChild(alertBox);
-
-    return formGroup;
-  }
-
-  private generateFieldId(section: SectionKey, key: string, index?: number): string {
-    return `${section}-${key}${index !== undefined ? `-${index}` : ""}`;
-  }
-
-  private createLabel(fieldId: string, text: string): HTMLLabelElement {
-    const label = document.createElement("label");
-    label.htmlFor = fieldId;
-    label.textContent = text;
-    label.className = "form-group__label";
-    return label;
-  }
-
-  private createInput(
-    fieldId: string,
-    field: { type: string },
-  ): HTMLInputElement | HTMLTextAreaElement {
-    let input: HTMLInputElement | HTMLTextAreaElement;
-
-    if (field.type === "textarea") {
-      input = document.createElement("textarea");
-      input.rows = 8;
-      input.className = "form-group__textarea";
-    } else {
-      input = document.createElement("input");
-      input.type = field.type;
-      input.className = "form-group__input";
-    }
-
-    input.id = fieldId;
-    input.setAttribute("name", fieldId);
-
-    return input;
-  }
-
-  private createAlertBox(fieldId: string): HTMLDivElement {
-    const alertBox = document.createElement("div");
-    alertBox.className = "form-group__alert";
-    alertBox.style.opacity = "0";
-    alertBox.id = `${fieldId}-error`;
-    return alertBox;
-  }
-
   renderValidationMessage(fieldId: string, message: string, type: string): void {
-    const alertBox = this.ctx.root.querySelector(`#${fieldId}-error`) as HTMLDivElement;
+    const alertBox = document.getElementById(`${fieldId}-error`);
     if (!alertBox) return;
 
     alertBox.textContent = message;
