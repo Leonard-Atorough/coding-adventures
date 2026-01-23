@@ -16,6 +16,7 @@ export default class FormElementFactory {
   static createInput(
     fieldId: string,
     field: { type: string },
+    data?: string | undefined,
   ): HTMLInputElement | HTMLTextAreaElement {
     let input: HTMLInputElement | HTMLTextAreaElement;
 
@@ -32,6 +33,9 @@ export default class FormElementFactory {
     input.id = fieldId;
     input.setAttribute("name", fieldId);
 
+    if (data !== undefined && data !== null) {
+      input.value = data || "";
+    }
     return input;
   }
 
@@ -47,13 +51,14 @@ export default class FormElementFactory {
     section: SectionKey,
     field: { key: string; label: string; type: string },
     index?: number,
+    data?: string | undefined,
   ): HTMLElement {
     const formGroup = document.createElement("div");
     formGroup.className = "form-group";
 
     const fieldId = this.generateFieldId(section, field.key, index);
     const label = this.createLabel(fieldId, field.label);
-    const input = this.createInput(fieldId, field);
+    const input = this.createInput(fieldId, field, data);
     const alertBox = this.createAlertBox(fieldId);
 
     if (field.type === "textarea") {
