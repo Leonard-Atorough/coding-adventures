@@ -150,3 +150,14 @@
   resize: vertical;
   min-height: 80px;
 }
+
+/* Mobile */
+@media (max-width: 600px) {
+  .form-groups {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group--full-width {
+    grid-column: span 1;
+  }
+}

@@ -63,3 +63,29 @@
   color: var(--color-text-secondary, #6b6b6b);
   font-size: var(--font-size-small, 0.875rem);
 }
+
+
+/* Mobile */
+@media (max-width: 600px) {
+  .resume-preview {
+    max-width: 100%;
+    min-height: auto;
+    padding: var(--spacing-md, 1rem);
+  }
+
+  .resume-preview h1 {
+    font-size: var(--font-size-xlarge, 1.5rem);
+  }
+
+  .resume-preview h2 {
+    font-size: var(--font-size-large, 1.125rem);
+  }
+
+  .resume-preview h3 {
+    font-size: var(--font-size-medium, 1rem);
+  }
+
+  .resume-preview .contact-info {
+    font-size: var(--font-size-xsmall, 0.75rem);
+  }
+}

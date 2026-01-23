@@ -71,3 +71,16 @@
     min-height: 600px;
   }
 }
+
+/* Mobile */
+@media (max-width: 600px) {
+  .builder-container {
+    grid-template-columns: 1fr;
+    padding: var(--spacing-sm);
+  }
+
+  .preview-container {
+    min-height: 400px;
+    padding: var(--spacing-md);
+  }
+}
