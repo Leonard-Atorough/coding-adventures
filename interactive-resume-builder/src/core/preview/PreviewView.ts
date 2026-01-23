@@ -24,26 +24,26 @@ export default class PreviewView {
     10. Optionally, add print styles for resume printing.
      */
     this.root.innerHTML = "";
-    this.renderHeaderSection(currentModel);
-    this.renderEducationSection(currentModel);
-    // this.renderWorkExperienceSection();
-    // this.renderSkillsSection();
-    // this.renderAdditionalInformationSection();
+    this.renderHeaderSection(currentModel.personalInfo);
+    this.renderSection(currentModel, "education", "education");
+    this.renderSection(currentModel, "workExperience", "workExperience");
+    this.renderSection(currentModel, "skills", "skillItem");
+    this.renderAdditionalInformationSection(currentModel.additionalInformation);
     return this.root;
   }
 
-  private renderHeaderSection(model: FormModel): void {
+  private renderHeaderSection(personalInfo: FormModel["personalInfo"]): void {
     const header = document.createElement("header");
     header.className = "preview-header";
 
     const nameEl = document.createElement("h1");
-    nameEl.textContent = model.personalInfo?.fullName || "Your Name";
+    nameEl.textContent = personalInfo?.fullName || "Your Name";
     header.appendChild(nameEl);
 
     const contactEl = document.createElement("p");
-    const email = model.personalInfo?.email || "";
-    const phone = model.personalInfo?.phone || "";
-    const address = model.personalInfo?.address || "";
+    const email = personalInfo?.email || "";
+    const phone = personalInfo?.phone || "";
+    const address = personalInfo?.address || "";
     contactEl.textContent = `Email: ${email} | Phone: ${phone} | Address: ${address}`;
     header.appendChild(contactEl);
 
@@ -52,7 +52,7 @@ export default class PreviewView {
     const summaryHeader = document.createElement("h2");
     summaryHeader.textContent = "Professional Summary";
     const summaryContent = document.createElement("p");
-    summaryContent.textContent = model.personalInfo?.summary || "A brief summary about yourself.";
+    summaryContent.textContent = personalInfo?.summary || "A brief summary about yourself.";
     summaryEl.appendChild(summaryHeader);
     summaryEl.appendChild(summaryContent);
     header.appendChild(summaryEl);
@@ -60,39 +60,89 @@ export default class PreviewView {
     this.root.appendChild(header);
   }
 
-  private renderEducationSection(model: FormModel): void {
-    const educationSection = document.createElement("section");
-    educationSection.className = "preview-education";
+  private renderAdditionalInformationSection(additionalInformation: FormModel["additionalInformation"]): void {
+    const section = document.createElement("section");
+    section.className = "preview-additional-information";
     const header = document.createElement("h2");
-    header.textContent = "Education";
-    educationSection.appendChild(header);
-    this.root.appendChild(educationSection);
+    header.textContent = "Additional Information";
+    section.appendChild(header);
 
-    model.education.forEach((edu) => {
-      this.renderEducationItem(educationSection, edu);
-    });
+    // Well render certifications, languages, hobbies as a single line each, with commas separating items. 
+    // We have to anticipate both a space and comma separated input and parse accordingly.
+    // We will render in the format: Certifications: cert1, cert2 <br> Languages: lang1, lang2 <br> Hobbies: hobby1, hobby2
+    // This is a simple approach and can be enhanced later.
+
+    this.root.appendChild(section);
   }
 
-  private renderEducationItem(
-    container: HTMLElement,
-    edu: FormModel["education"][0],
+  private renderSection<T>(
+    model: FormModel,
+    sectionKey: keyof FormModel,
+    itemType: "education" | "workExperience" | "skillItem",
   ): void {
-    const eduDiv = document.createElement("div");
-    eduDiv.className = "preview-education-item";
+    const section = document.createElement("section");
+    section.className = `preview-${sectionKey.toString().toLowerCase()}`;
+    const header = document.createElement("h2");
 
-    const institutionEl = document.createElement("h3");
-    institutionEl.textContent = edu.institution ?? "Institution Name";
-    eduDiv.appendChild(institutionEl);
+    switch (sectionKey) {
+      case "education":
+        header.textContent = "Education";
+        break;
+      case "workExperience":
+        header.textContent = "Work Experience";
+        break;
+      case "skills":
+        header.textContent = "Skills";
+        break;
+      default:
+        header.textContent = sectionKey.toString();
+    }
+    section.appendChild(header);
+    (model[sectionKey] as Array<T>).forEach((item) => {
+      this.renderItem(section, item, itemType);
+    });
+    this.root.appendChild(section);
+  }
 
-    const degreeEl = document.createElement("p");
-    degreeEl.textContent = `${edu.degree || "Degree"} (${edu.startDate || "Start Date"} - ${edu.endDate || "End Date"})`;
-    eduDiv.appendChild(degreeEl);
+  private renderItem<T>(
+    container: HTMLElement,
+    item: T,
+    itemType: "education" | "workExperience" | "skillItem",
+  ): void {
+    const itemDiv = document.createElement("div");
+    itemDiv.className = `preview-${itemType}-item`;
 
-    const descriptionEl = document.createElement("p");
-    descriptionEl.textContent = edu.description || "Description of your studies.";
-    eduDiv.appendChild(descriptionEl);
+    const titleEl = document.createElement("h3");
+    if (itemType === "education") {
+      titleEl.textContent = (item as any).institution || "Institution Name";
+    } else if (itemType === "workExperience") {
+      titleEl.textContent = (item as any).company || "Company Name";
+    } else if (itemType === "skillItem") {
+      titleEl.textContent = (item as any).title || "Skill Title";
+    }
+    itemDiv.appendChild(titleEl);
 
-    container.appendChild(eduDiv);
+    const detailEl = document.createElement("p");
+    if (itemType === "education") {
+      detailEl.innerHTML = `<strong>${(item as any).degree || "Degree"} - ${(item as any).fieldOfStudy || "Field"}</strong> (${(item as any).startDate || "Start Date"} - ${(item as any).endDate || "End Date"})`;
+    } else if (itemType === "workExperience") {
+      detailEl.textContent = `${(item as any).role || "Role"} (${(item as any).startDate || "Start Date"} - ${(item as any).endDate || "End Date"})`;
+    } else if (itemType === "skillItem") {
+      detailEl.textContent = (item as any).description || "Skill Description";
+    }
+    itemDiv.appendChild(detailEl);
 
+    if (itemType !== "skillItem") {
+      const descriptionEl = document.createElement("p");
+      if (itemType === "education") {
+        descriptionEl.textContent = (item as any).description || "Description of your studies.";
+      } else if (itemType === "workExperience") {
+        descriptionEl.textContent =
+          (item as any).responsibilities || "Description of your responsibilities.";
+      }
+      itemDiv.appendChild(descriptionEl);
+    }
+
+    container.appendChild(itemDiv);
   }
 }

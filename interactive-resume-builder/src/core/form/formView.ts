@@ -159,17 +159,16 @@ export default class FormView {
       `Add ${formConfig[section].displayName}`,
       "form-section__add-button",
       () => {
-        (this.model[section] as Array<any>) = [
-          ...(this.model[section] as Array<any>),
-          {
-            institution: "",
-            degree: "",
-            fieldOfStudy: "",
-            startDate: "",
-            endDate: "",
-            description: "",
+        // Create an empty object with all fields from the section's config
+        const newItem = formConfig[section].fields.reduce(
+          (obj, field) => {
+            obj[field.key] = "";
+            return obj;
           },
-        ];
+          {} as Record<string, string>,
+        );
+
+        (this.model[section] as Array<any>) = [...(this.model[section] as Array<any>), newItem];
         this.render();
         const modelUpdateEvent = new CustomEvent<Partial<FormModel>>("modelUpdate", {
           detail: { ...this.model },
