@@ -1,0 +1,21 @@
+.DS_Store
+node_modules/
+dist/
+*.local
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+coverage/
+.nyc_output/
+
+# Build
+*.tsbuildinfo
