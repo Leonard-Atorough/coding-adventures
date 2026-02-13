@@ -8,6 +8,19 @@ import { getConfiguration, ConfigurationId } from "./configurations";
 
 export type EnginePriority = "efficiency" | "power" | "reliability" | "balanced";
 
+export type hullType = "corvette" | "frigate" | "destroyer" | "cruiser" | "carrier";
+
+const hullTypeProperties: Record<
+  hullType,
+  { displacementRange: [number, number]; admiraltyCoefficient: number }
+> = {
+  corvette: { displacementRange: [500, 2000], admiraltyCoefficient: 180 },
+  frigate: { displacementRange: [2000, 6000], admiraltyCoefficient: 210 },
+  destroyer: { displacementRange: [6000, 10000], admiraltyCoefficient: 210 },
+  cruiser: { displacementRange: [10000, 20000], admiraltyCoefficient: 210 },
+  carrier: { displacementRange: [20000, 100000], admiraltyCoefficient: 210 },
+};
+
 /**
  * Input parameters provided by the ship designer
  */
@@ -19,6 +32,7 @@ export interface EngineDesignInput {
   hullDragCoefficient: number; // 0.0 - 1.0, higher = more drag
   desiredCruisingSpeed?: number; // knots, optional
   year?: number; // constraints available configs
+  hullType: hullType;
 }
 
 /**
@@ -96,10 +110,16 @@ export function calculateEngineSystem(input: EngineDesignInput): EngineSystemOut
   const priorityAdjustment = getPriorityAdjustment(input.enginePriority);
 
   // Step 1: Calculate required thrust and power
-  let { powerRequired } = calculatePowerRequirement(
+  // let { powerRequired } = calculatePowerRequirement(
+  //   input.shipDisplacement,
+  //   input.hullDragCoefficient,
+  //   input.desiredTopSpeed,
+  // );
+
+  let { powerRequired } = alternateCalculatePowerRequirement(
     input.shipDisplacement,
-    input.hullDragCoefficient,
     input.desiredTopSpeed,
+    input.hullType,
   );
 
   // Apply power priority adjustment - power priority means willing to use more fuel for more available power
@@ -218,7 +238,7 @@ function calculatePowerRequirement(
   // The constant is calibrated for typical destroyer hulls
 
   // Calculate power in HP using empirical law
-  const baseHPCoefficient = 0.0035; // Calibrated to match real destroyers
+  const baseHPCoefficient = 0.0035; // Calibrated to match real destroyers. We can have a range of constants for different hull types or have hulls pass in their constant.
   const displacementExponent = 0.67; // displacement factor (2/3)
   const speedExponent = 3.0; // speed factor (cubic relationship)
 
@@ -234,6 +254,45 @@ function calculatePowerRequirement(
     hullDragFactor;
 
   // Thrust is a derived value (placeholder for consistency)
+  const thrustRequired = powerHP * 100; // Arbitrary conversion
+
+  return { thrustRequired, powerRequired: powerHP };
+}
+
+function alternateCalculatePowerRequirement(
+  shipDisplacement: number,
+  desiredSpeed: number,
+  hullType: hullType,
+): { thrustRequired: number; powerRequired: number } {
+  const hullProps = hullTypeProperties[hullType];
+
+  // Ensure displacement is within hull type range
+  if (
+    shipDisplacement < hullProps.displacementRange[0] ||
+    shipDisplacement > hullProps.displacementRange[1]
+  ) {
+    throw new Error(
+      `Displacement ${shipDisplacement}t is out of range for hull type ${hullType} (${hullProps.displacementRange[0]}t - ${hullProps.displacementRange[1]}t)`,
+    );
+  }
+  const kWToSHP = 0.7457;
+  const powerAdjustmentFactor = 1.0; // Placeholder for gameplay adjustments based on selected hull design. Probably don't need as admiralty coefficient already accounts for hull efficiency and planingEfficiencyFactor helps smooth out outliers.
+  let planingEfficiencyFactor = 1.0;
+
+  // get planing efficiency factor
+  if (shipDisplacement < 1500) {
+    // planing hull
+    planingEfficiencyFactor = 0.82;
+  } else if (shipDisplacement < 4000) {
+    // small displacement hull
+    planingEfficiencyFactor = 0.91;
+  }
+
+  // using the AdmiraltyWithResistance formula
+  const powerKW =
+    (Math.pow(shipDisplacement, 2 / 3) * Math.pow(desiredSpeed, 3)) /
+    hullProps.admiraltyCoefficient;
+  const powerHP = powerKW / planingEfficiencyFactor / kWToSHP;
   const thrustRequired = powerHP * 100; // Arbitrary conversion
 
   return { thrustRequired, powerRequired: powerHP };

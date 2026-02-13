@@ -16,6 +16,7 @@ function App() {
     enginePriority: "balanced",
     shipDisplacement: 5000,
     hullDragCoefficient: 0.15,
+    hullType: "frigate",
   });
 
   const [results, setResults] = useState<EngineSystemOutput | null>(null);
@@ -47,6 +48,20 @@ function App() {
       <main>
         <section className="input-panel">
           <h2>Engine Configuration</h2>
+
+          <fieldset>
+            <legend>Hull Type</legend>
+            <select
+              value={input.hullType}
+              onChange={(e) => setInput({ ...input, hullType: e.target.value as any })}
+            >
+              <option value="corvette">Corvette</option>
+              <option value="frigate">Frigate</option>
+              <option value="destroyer">Destroyer</option>
+              <option value="cruiser">Cruiser</option>
+              <option value="carrier">Carrier</option>
+            </select>
+          </fieldset>
 
           <fieldset>
             <legend>Configuration Type</legend>
